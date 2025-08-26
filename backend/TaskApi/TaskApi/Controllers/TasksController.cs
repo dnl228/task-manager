@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskApi.Data;
 using TaskApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TaskApi.Controllers
 {
@@ -10,6 +11,7 @@ namespace TaskApi.Controllers
     public class TasksController(AppDbContext db) : ControllerBase
     {
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<TaskItem>>> Get([FromQuery] string? status)
         {
             IQueryable<TaskItem> q = db.Tasks.OrderByDescending(t => t.Id);
@@ -23,6 +25,7 @@ namespace TaskApi.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [AllowAnonymous]
         public async Task<ActionResult<TaskItem>> GetById(int id)
         {
             var item = await db.Tasks.FindAsync(id);
@@ -30,6 +33,7 @@ namespace TaskApi.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<TaskItem>> Create(TaskItem item)
         {
             db.Tasks.Add(item);
@@ -38,6 +42,7 @@ namespace TaskApi.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> Update(int id, TaskItem input)
         {
             var item = await db.Tasks.FindAsync(id);
@@ -51,6 +56,7 @@ namespace TaskApi.Controllers
         }
 
         [HttpPatch("{id:int}/toggle")]
+        [Authorize]
         public async Task<IActionResult> Toggle(int id)
         {
             var item = await db.Tasks.FindAsync(id);
@@ -61,6 +67,7 @@ namespace TaskApi.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             var item = await db.Tasks.FindAsync(id);
