@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/backend/TaskApi/TaskApi/Migrations
+/backend/TaskApi/TaskApi/App.db
+/backend/TaskApi/TaskApi/App.db-shm
+/backend/TaskApi/TaskApi/App.db-wal
