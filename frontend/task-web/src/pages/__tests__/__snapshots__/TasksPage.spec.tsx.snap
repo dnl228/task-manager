@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`TasksPage matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    style="max-width: 720px; margin: 2rem auto; padding: 16px;"
+  >
+    <header>
+      HeaderMock
+    </header>
+    <div>
+      FilterBarMock
+    </div>
+    <form>
+      TaskFormMock
+    </form>
+    <ul>
+      TaskListMock
+    </ul>
+  </div>
+</DocumentFragment>
+`;

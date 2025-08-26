@@ -11,7 +11,7 @@ namespace TaskApi.Controllers
     public class TasksController(AppDbContext db) : ControllerBase
     {
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<TaskItem>>> Get([FromQuery] string? status)
         {
             IQueryable<TaskItem> q = db.Tasks.OrderByDescending(t => t.Id);
@@ -25,7 +25,7 @@ namespace TaskApi.Controllers
         }
 
         [HttpGet("{id:int}")]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<ActionResult<TaskItem>> GetById(int id)
         {
             var item = await db.Tasks.FindAsync(id);
