@@ -22,7 +22,7 @@ describe('App', () => {
   test('renders LoginForm when not authed', () => {
     mockUseAuth.mockReturnValue({ isAuthed: false, token: null, login: jest.fn(), logout: jest.fn() });
     mockUseTasks.mockReturnValue({
-      tasks: [],
+      groupedTasks: { all: [], completed: [], pending: [] },
       filter: 'all',
       setFilter: jest.fn(),
       counts: { all: 0, completed: 0, pending: 0 },
@@ -41,9 +41,7 @@ describe('App', () => {
     mockUseAuth.mockReturnValue({ isAuthed: true, token: 'token', login: jest.fn(), logout: jest.fn() });
 
     mockUseTasks.mockReturnValue({
-      tasks: [
-        { id: 1, title: 'Test task', isCompleted: false, createdAt: new Date().toISOString(), description: 'desc' }
-      ],
+      groupedTasks: { all: [ { id: 1, title: 'Test task', isCompleted: false, createdAt: new Date().toISOString(), description: 'desc' } ], completed: [], pending: []},
       filter: 'all',
       setFilter: jest.fn(),
       counts: { all: 1, completed: 0, pending: 1 },

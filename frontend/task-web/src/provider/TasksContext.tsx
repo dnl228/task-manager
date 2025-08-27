@@ -1,60 +1,51 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { api } from '../libs/api';
-
-export type NewTask = {
-    title: string;
-    description?: string;
-}
-
-export type Task = {
-    id: number;
-    title: string;
-    isCompleted: boolean;
-    createdAt: string;
-    description?: string;
-}
-
-export const TaskStatus = {
-    All: 'all',
-    Completed: 'completed',
-    Pending: 'pending'
-} as const;
-
-export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus];
+import type { NewTask } from '../types/newTask';
+import type { Task } from '../types/task';
+import type { TaskStatus } from '../types/taskStatus';
 
 type TasksContextType = {
-  tasks: Task[];
+  groupedTasks: { all: Task[], completed: Task[], pending: Task[] };
   filter: TaskStatus;
   setFilter: React.Dispatch<React.SetStateAction<TaskStatus>>;
   counts: { all: number; completed: number; pending: number };
   loading: boolean;
   load: (status?: TaskStatus) => Promise<void>;
   createTask: (payload: NewTask) => Promise<void>;
+  updateTask: (id: number, payload: NewTask) => Promise<void>;
   toggleTask: (id: number) => Promise<void>;
   deleteTask: (id: number) => Promise<void>;
+  moveTask: (id: number, direction: string) => Promise<void>;
+  setActiveTask: React.Dispatch<React.SetStateAction<Task | null>>;
+  activeTask: Task | null
 };
 
 const TasksContext = createContext<TasksContextType | null>(null);
 
 export function TasksProvider({ children }: Readonly<React.PropsWithChildren>) {
+  const [activeTask, setActiveTask] = useState<Task | null>(null)
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filter, setFilter] = useState<TaskStatus>('all'); 
   const [loading, setLoading] = useState(false);
 
-  const load = useCallback(async (status = filter) => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
-      const q = status === 'all' ? '' : `?status=${status}`;
-      const { data } = await api.get(`/tasks${q}`);
+      const { data } = await api.get(`/tasks`);
       setTasks(data);
     } finally {
       setLoading(false);
     }
-  }, [filter]);
+  }, []);
 
   const createTask = useCallback(async (payload: NewTask) => {
     await api.post('/tasks', payload);
+    await load();
+  }, [load]);
+
+  const updateTask = useCallback(async (id: number, payload: NewTask) => {
+    await api.put(`/tasks/${id}`, payload);
     await load();
   }, [load]);
 
@@ -68,19 +59,30 @@ export function TasksProvider({ children }: Readonly<React.PropsWithChildren>) {
     await load();
   }, [load]);
 
+  const moveTask = useCallback(async (id: number, direction: string) => {
+    await api.patch(`/tasks/${id}/move?direction=${direction}`);
+    await load();
+  }, [load]);
+
   const counts = useMemo(() => ({
     all: tasks.length,
     completed: tasks && tasks.filter(t => t.isCompleted).length,
     pending: tasks && tasks.filter(t => !t.isCompleted).length
   }), [tasks]);
 
+  const groupedTasks = useMemo(() => ({
+    all: tasks,
+    completed: tasks && tasks.filter(t => t.isCompleted),
+    pending: tasks && tasks.filter(t => !t.isCompleted)
+  }), [tasks])
 
   useEffect(() => { load(); }, [filter, load]);
 
   const value = {
-    tasks, filter, setFilter, counts,
+    groupedTasks, filter, setFilter, counts,
     loading,
-    load, createTask, toggleTask, deleteTask
+    load, createTask, updateTask, toggleTask, deleteTask, moveTask,
+    activeTask, setActiveTask
   };
 
   return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>;

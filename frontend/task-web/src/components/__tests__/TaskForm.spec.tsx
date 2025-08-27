@@ -14,7 +14,7 @@ describe('TaskForm', () => {
   test('disables submit when title empty', () => {
     mockUseTasks.mockReturnValue({ createTask: jest.fn() });
     render(<TaskForm />);
-    const btn = screen.getByRole('button', { name: /add task/i });
+    const btn = screen.getByRole('button', { name: /save task/i });
     expect(btn).toBeDisabled();
   });
 
@@ -25,7 +25,7 @@ describe('TaskForm', () => {
 
     const title = screen.getByPlaceholderText(/Title/i);
     const desc = screen.getByPlaceholderText(/Description \(optional\)/i);
-    const btn = screen.getByRole('button', { name: /add task/i });
+    const btn = screen.getByRole('button', { name: /save task/i });
 
     fireEvent.change(title, { target: { value: 'New Task' } });
     fireEvent.change(desc, { target: { value: 'Desc' } });
@@ -44,7 +44,7 @@ describe('TaskForm', () => {
     render(<TaskForm />);
 
     const title = screen.getByPlaceholderText(/Title/i);
-    const btn = screen.getByRole('button', { name: /add task/i });
+    const btn = screen.getByRole('button', { name: /save task/i });
 
     fireEvent.change(title, { target: { value: 'New' } });
     fireEvent.click(btn);

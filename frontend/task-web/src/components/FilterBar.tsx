@@ -1,4 +1,5 @@
-import { TaskStatus, useTasks } from '../provider/TasksContext';
+import { useTasks } from '../provider/TasksContext';
+import type { TaskStatus } from '../types/taskStatus';
 
 export default function FilterBar() {
   const { filter, setFilter, counts } = useTasks();

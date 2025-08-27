@@ -4,10 +4,10 @@ import { TasksProvider, useTasks } from '../TasksContext';
 import { api } from '../../libs/api';
 
 function TestConsumer() {
-  const { tasks, filter, setFilter, counts, loading, load, createTask, toggleTask, deleteTask } = useTasks();
+  const { groupedTasks, filter, setFilter, counts, loading, load, createTask, toggleTask, deleteTask } = useTasks();
   return (
     <div>
-      <div data-testid="tasks">{JSON.stringify(tasks)}</div>
+      <div data-testid="tasks">{JSON.stringify(groupedTasks)}</div>
       <div data-testid="filter">{filter}</div>
       <div data-testid="counts">{JSON.stringify(counts)}</div>
       <div data-testid="loading">{loading ? 'true' : 'false'}</div>
@@ -54,7 +54,7 @@ describe('TasksProvider', () => {
 
     fireEvent.click(screen.getByText('doLoadCompleted'));
 
-    await waitFor(() => expect((api.get as jest.Mock)).toHaveBeenCalledWith('/tasks?status=completed'));
+    await waitFor(() => expect((api.get as jest.Mock)).toHaveBeenCalledWith('/tasks'));
   });
 
   test('createTask posts and then reloads tasks', async () => {
@@ -116,7 +116,7 @@ describe('TasksProvider', () => {
     fireEvent.click(screen.getByText('doDelete'));
 
     await waitFor(() => expect(api.delete).toHaveBeenCalledWith('/tasks/1'));
-    await waitFor(() => expect(screen.getByTestId('tasks').textContent).toBe('[]'));
+    await waitFor(() => expect(screen.getByTestId('tasks').textContent).toBe("{\"all\":[],\"completed\":[],\"pending\":[]}"));
   });
 
   test('setFilter updates filter state', async () => {

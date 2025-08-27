@@ -1,5 +1,8 @@
-﻿namespace TaskApi.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace TaskApi.Models
 {
+    [Index(nameof(Order))]
     public class TaskItem
     {
         public int Id { get; set; }
@@ -7,5 +10,6 @@
         public string? Description { get; set; }
         public bool IsCompleted { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public int Order { get; set; }
     }
 }

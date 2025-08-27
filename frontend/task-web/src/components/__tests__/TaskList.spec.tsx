@@ -18,13 +18,13 @@ afterEach(() => jest.resetAllMocks());
 
 describe('TaskList', () => {
   test('shows loading state', () => {
-    mockUseTasks.mockReturnValue({ loading: true, tasks: [] });
+    mockUseTasks.mockReturnValue({ loading: true, groupedTasks: { all: [], completed: [], pending: []} });
     render(<TaskList />);
     expect(screen.getByText(/Loading…/i)).toBeInTheDocument();
   });
 
   test('shows empty message when no tasks', () => {
-    mockUseTasks.mockReturnValue({ loading: false, tasks: [] });
+    mockUseTasks.mockReturnValue({ loading: false, filter: 'all', groupedTasks: { all: [], completed: [], pending: []} });
     render(<TaskList />);
     expect(screen.getByText(/No tasks yet\./i)).toBeInTheDocument();
   });
@@ -34,7 +34,7 @@ describe('TaskList', () => {
       { id: 1, title: 'First', isCompleted: false, createdAt: new Date().toISOString() },
       { id: 2, title: 'Second', isCompleted: true, createdAt: new Date().toISOString() },
     ];
-    mockUseTasks.mockReturnValue({ loading: false, tasks });
+    mockUseTasks.mockReturnValue({ loading: false, groupedTasks: { all: tasks, completed: [tasks[1]], pending: [tasks[0]] }, filter: 'all' });
 
     render(<TaskList />);
 
