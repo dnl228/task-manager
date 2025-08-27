@@ -16,8 +16,9 @@ export default function FilterBar() {
         padding: '6px 10px',
         borderRadius: 8,
         border: '1px solid #ddd',
-        background: filter === id ? '#eee' : 'white'
+        background: filter === id ? '#eee' : 'white',
       }}
+      className="cursor-pointer"
     >
       {label} ({count})
     </button>

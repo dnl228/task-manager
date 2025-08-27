@@ -43,16 +43,18 @@ export default function TaskForm() {
         placeholder="Title"
         value={form.title}
         onChange={e => setForm(s => ({ ...s, title: e.target.value }))}
+        className="w-full border mt-1 bg-indigo-500/5 mb-2 border-gray-500/10 outline-none rounded py-2.5 px-3"
       />
       <textarea
         placeholder="Description (optional)"
         value={form.description}
         onChange={e => setForm(s => ({ ...s, description: e.target.value }))}
+        className="w-full border mt-1 bg-indigo-500/5 mb-2 border-gray-500/10 outline-none rounded py-2.5 px-3"
       />
-      <button type="submit" disabled={busy || !form.title.trim()}>
+      <button type="submit" disabled={busy || !form.title.trim()} className="w-full py-3 cursor-pointer active:scale-95 transition text-sm text-white rounded-lg bg-slate-700">
         {busy ? 'Saving' : 'Save Task'}
       </button>
-      { activeTask && <button type="button" disabled={busy} onClick={() => setActiveTask(null)}>
+      { activeTask && <button type="button" disabled={busy} onClick={() => setActiveTask(null)} className="w-full py-3 cursor-pointer active:scale-95 transition text-sm text-slate-700 rounded-lg bg-slate-300">
         Cancel
       </button>}
       {error && <div style={{ color: 'crimson' }}>{error}</div>}
