@@ -51,6 +51,9 @@ builder.Services.AddCors(opt =>
 
 var app = builder.Build();
 
+// Apply Database Migrations for SQLite
+ApplyMigrations(app);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -67,3 +70,35 @@ app.UseCors("dev");
 app.MapControllers();
 
 app.Run();
+
+
+static void ApplyMigrations(WebApplication app)
+{
+    using var scope = app.Services.CreateScope();
+    var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DbMigration");
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    if ((db.Database.ProviderName ?? "").Contains("Sqlite", StringComparison.OrdinalIgnoreCase))
+    {
+        try
+        {
+            var dbPath = db.Database.GetDbConnection().DataSource;
+            if (!string.IsNullOrWhiteSpace(dbPath))
+            {
+                var dir = Path.GetDirectoryName(Path.GetFullPath(dbPath));
+                if (!string.IsNullOrWhiteSpace(dir))
+                    Directory.CreateDirectory(dir);
+            }
+
+            logger.LogInformation("Applying SQLite migrations...");
+            db.Database.Migrate();
+            logger.LogInformation("SQLite migrations applied.");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to apply SQLite migrations.");
+            throw;
+        }
+        return;
+    }
+}

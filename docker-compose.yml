@@ -1,0 +1,30 @@
+services:
+  taskapi:
+    build:
+      context: ./backend/TaskApi/TaskApi
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      # Override secrets in compose for local/dev if you want
+      # Jwt__Key: "dev-please-change-this-very-long-secret"
+    volumes:
+      - taskapi-data:/app/data
+    ports:
+      - "8080:8080"
+    networks: [tasknet]
+
+  taskweb:
+    build:
+      context: ./frontend/task-web
+      dockerfile: Dockerfile
+    depends_on:
+      - taskapi
+    ports:
+      - "8081:80"
+    networks: [tasknet]
+
+networks:
+  tasknet: {}
+
+volumes:
+  taskapi-data: {}
