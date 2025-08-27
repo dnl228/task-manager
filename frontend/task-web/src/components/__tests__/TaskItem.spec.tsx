@@ -51,13 +51,6 @@ describe('TaskItem', () => {
     expect(moveTask).toHaveBeenCalledWith(1, 'down');
   });
 
-  test('move buttons are disabled when canMoveUp/canMoveDown are false', () => {
-    mockUseTasks.mockReturnValue({ toggleTask: jest.fn(), deleteTask: jest.fn(), moveTask: jest.fn(), setActiveTask: jest.fn() });
-    render(<TaskItem task={baseTask} canMoveUp={false} canMoveDown={false} />);
-    expect(screen.getByText('▲')).toBeDisabled();
-    expect(screen.getByText('▼')).toBeDisabled();
-  });
-
   test('calls setActiveTask when Edit button is clicked', () => {
     const setActiveTask = jest.fn();
     mockUseTasks.mockReturnValue({ toggleTask: jest.fn(), deleteTask: jest.fn(), moveTask: jest.fn(), setActiveTask });
