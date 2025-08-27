@@ -54,12 +54,8 @@ var app = builder.Build();
 // Apply Database Migrations for SQLite
 ApplyMigrations(app);
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
