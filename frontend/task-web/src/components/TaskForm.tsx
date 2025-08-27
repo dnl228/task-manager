@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTasks } from '../provider/TasksContext';
 
 export default function TaskForm() {
-  const { createTask } = useTasks();
-  const [form, setForm] = useState({ title: '', description: '' });
+  const { createTask, updateTask, activeTask, setActiveTask } = useTasks();
+  const [form, setForm] = useState({ title: activeTask?.title ?? '', description: activeTask?.description ?? '' });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -13,14 +13,29 @@ export default function TaskForm() {
     setBusy(true);
     setError(null);
     try {
-      await createTask(form);
+      if(!activeTask || !activeTask.id){ 
+        await createTask(form);
+      }
+      else {
+        await updateTask(activeTask.id, form);
+      }
       setForm({ title: '', description: '' });
+      setActiveTask(null);
     } catch {
       setError('Could not create task.');
     } finally {
       setBusy(false);
     }
   };
+
+  useEffect(() => {
+    if(activeTask) {
+      setForm({ title: activeTask.title, description: activeTask.description ?? ''});
+    }
+    else {
+      setForm({title: '', description: ''});
+    }
+  }, [activeTask])
 
   return (
     <form onSubmit={submit} style={{ display: 'grid', gap: 8, marginBottom: 24 }}>
@@ -35,8 +50,11 @@ export default function TaskForm() {
         onChange={e => setForm(s => ({ ...s, description: e.target.value }))}
       />
       <button type="submit" disabled={busy || !form.title.trim()}>
-        {busy ? 'Adding…' : 'Add Task'}
+        {busy ? 'Saving' : 'Save Task'}
       </button>
+      { activeTask && <button type="button" disabled={busy} onClick={() => setActiveTask(null)}>
+        Cancel
+      </button>}
       {error && <div style={{ color: 'crimson' }}>{error}</div>}
     </form>
   );
